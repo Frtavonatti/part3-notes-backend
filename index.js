@@ -1,11 +1,9 @@
 const express = require('express')
 const cors = require('cors')
 const app = express()
-// Activemos json-parser: toma los datos JSON de una solicitud, 
-// los transforma en un objeto JavaScript 
-// y luego los adjunta a la propiedad body del objeto request 
-// antes de llamar al controlador de ruta. 
+
 app.use(express.json())
+app.use(express.static('dist'))
 app.use(cors())
 
 
