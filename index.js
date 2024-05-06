@@ -1,7 +1,6 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-const mongoose = require('mongoose')
 const app = express()
 const Note = require('./models/note')
 
@@ -23,29 +22,14 @@ app.get('/api/notes', (request, response) => {
 
 //No funcional
 app.get('/api/notes/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const note = notes.find(note => note.id === id)
-
-    if (note) {
-        response.json(note)
-      } else {
-        response.status(404)
-        .send("Current id does not exist")
-        .end()
-      }
+    const id = request.params.id
+    Note.findById(id).then(note => {
+      response.json(note)
+    })
 })
 
-const generateId = () => {
-  const maxId = notes.length > 0
-    ? Math.max(...notes.map(n => n.id))
-    : 0
-  return maxId + 1
-}
-
-//No funcional
 app.post('/api/notes', (request, response) => {
   const body = request.body
-  console.log(body);
 
   if (!body.content) {
     return response.status(400).json({ 
@@ -53,14 +37,14 @@ app.post('/api/notes', (request, response) => {
     })
   }
 
-  const note = {
+  const note = new Note ({
     content: body.content,
     important: Boolean(body.important) || false,
-    id: generateId(),
-  }
+  })
 
-  notes = notes.concat(note)
-  response.json(note)
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  })
 })
 
 //No funcional
