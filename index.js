@@ -1,38 +1,27 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
+const mongoose = require('mongoose')
 const app = express()
+const Note = require('./models/note')
 
 app.use(express.json())
 app.use(express.static('dist'))
 app.use(cors())
 
 
-let notes = [
-    {
-      id: 1,
-      content: "HTML is easy",
-      important: true
-    },
-    {
-      id: 2,
-      content: "Browser can execute only JavaScript",
-      important: false
-    },
-    {
-      id: 3,
-      content: "GET and POST are the most important methods of HTTP protocol",
-      important: true
-    }
-]
-
+//No funcional
 app.get('/', (request, response) => {
     response.send('<h1>Hello World</h1>')
 })
 
 app.get('/api/notes', (request, response) => {
+  Note.find({}).then(notes => {
     response.json(notes)
+  })
 })
 
+//No funcional
 app.get('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
     const note = notes.find(note => note.id === id)
@@ -53,7 +42,7 @@ const generateId = () => {
   return maxId + 1
 }
 
-
+//No funcional
 app.post('/api/notes', (request, response) => {
   const body = request.body
   console.log(body);
@@ -74,7 +63,7 @@ app.post('/api/notes', (request, response) => {
   response.json(note)
 })
 
-
+//No funcional
 app.delete('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id)
   notes = notes.filter(note => note.id !== id)

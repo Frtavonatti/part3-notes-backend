@@ -1,5 +1,4 @@
-const Note = require('./models/note')
-// const mongoose = require('mongoose')
+const mongoose = require('mongoose')
 
 if (process.argv.length<3) {
   console.log('give password as argument')
@@ -8,8 +7,7 @@ if (process.argv.length<3) {
 
 const password = process.argv[2]
 
-const url =
-  `mongodb+srv://frtavonatti:${password}@atlascluster.mwbdd5d.mongodb.net/noteApp?retryWrites=true&w=majority&appName=AtlasCluster`
+const url = `mongodb+srv://frtavonatti:${password}@atlascluster.mwbdd5d.mongodb.net/noteApp?retryWrites=true&w=majority&appName=AtlasCluster`
 
 mongoose.set('strictQuery',false)
 
