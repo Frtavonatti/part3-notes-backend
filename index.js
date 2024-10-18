@@ -4,9 +4,9 @@
 // const app = express()
 // const Note = require('./models/note')
 
-// app.use(express.json())
-// app.use(express.static('dist'))
 // app.use(cors())
+// app.use(express.static('dist'))
+// app.use(express.json())
 
 const express = require('express')
 const app = express()
@@ -53,7 +53,6 @@ app.get('/api/notes', (request, response) => {
   Note.find({}).then(notes => {
     response.json(notes)
   })
-  .catch(error => next(error))
 })
 
 app.get('/api/notes/:id', (request, response) => {
@@ -88,17 +87,36 @@ app.post('/api/notes', (request, response) => {
 
   note.save().then(savedNote => {
     response.json(savedNote)
+    console.log('Nota guardada');
+    
   })
-  .catch(error => next(error))
 })
 
-app.delete('/api/notes/:id', (request, response) => {
+app.delete('/api/notes/:id', (request, response, next) => {
   const id = request.params.id
   Note.findByIdAndDelete(id)
   .then(result => {
     response.status(204).end()
   })
   .catch(error => next(error))
+})
+
+//Crear metodo put 
+//Investigar sobre metodo findByIdAndUpdate
+
+app.put('/api/notes/:id', (request, response, next) => {
+  const body = request.body
+  
+  const note = {
+    content: body.content,
+    important: body.important,
+  }
+
+  Note.findByIdAndUpdate(request.params.id, note, { new: true })
+    .then(updatedNote => {
+      response.json(updatedNote)
+    })
+    .catch(error => next(error))
 })
 
 app.use(unknownEndpoint)
