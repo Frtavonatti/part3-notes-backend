@@ -1,14 +1,13 @@
 const express  = require('express')
 const app = express()
-app.use(express.json())
 
 let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
+  { 
+    "id": 1,
+    "name": "Arto Hellas", 
+    "number": "040-123456"
+  },
+  { 
       "id": 2,
       "name": "Ada Lovelace", 
       "number": "39-44-5323523"
@@ -23,8 +22,17 @@ let persons = [
       "name": "Mary Poppendieck", 
       "number": "39-23-6423122"
     }
-]
+  ]
+  
+  // MIDDLEWARE
+app.use(express.json())
 
+const morgan = require('morgan')
+morgan.token('content', (req, res) => JSON.stringify(req.body))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content '))
+
+
+// ROUTES
 app.get('/', (req, res) => {
     res.send('<h1>Hello world</h1>')
 })
@@ -77,6 +85,7 @@ app.post('/api/persons', (req, res) => {
   }
 
   persons = persons.concat(newPerson)
+  console.log(`${newPerson.name} successfully added`);
   res.status(201).json(persons)
 })
 
