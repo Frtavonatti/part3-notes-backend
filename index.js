@@ -27,6 +27,9 @@ let persons = [
   // MIDDLEWARE
 app.use(express.json())
 
+const cors = require('cors')
+app.use(cors)
+
 const morgan = require('morgan')
 morgan.token('content', (req, res) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content '))
