@@ -1,6 +1,3 @@
-const express  = require('express')
-const app = express()
-
 let persons = [
   { 
     "id": 1,
@@ -23,16 +20,18 @@ let persons = [
       "number": "39-23-6423122"
     }
   ]
+
   
-  // MIDDLEWARE
-app.use(express.json())
-
+// MIDDLEWARE
+const express  = require('express')
 const cors = require('cors')
-app.use(cors)
+const morgan = require('morgan')
 
+const app = express()
+app.use(express.json())
+app.use(cors())
 app.use(express.static('dist'))
 
-const morgan = require('morgan')
 morgan.token('content', (req, res) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content '))
 
@@ -110,7 +109,7 @@ app.delete('/api/persons/:id', (req, res) => {
   }
 })
 
-const PORT = 3000 
+const PORT = 3001 
 app.listen(PORT,  () => {
     console.log(`Server running on port ${PORT}`);
 })
