@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "build:ui": "rm -rf dist && (cd ../full-stack-app/part2/phonebook && npm run build) && cp -r ../full-stack-app/part2/phonebook/dist ./",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "frtav",

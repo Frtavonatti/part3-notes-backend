@@ -65,6 +65,7 @@ const createNewID = () => {
 }
 
 app.post('/api/persons', (req, res) => {
+  console.log(req.body)
   const newName = req.body.name
   const newNumber = req.body.number
 
