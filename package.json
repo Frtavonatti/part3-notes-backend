@@ -15,6 +15,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.1",
+    "mongoose": "^8.8.0",
     "morgan": "^1.10.0"
   },
   "devDependencies": {

@@ -55,11 +55,11 @@ app.get('/api/persons', (req, res) => {
 app.get('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
   const person = persons.find(person => person.id === Number(id))
-
   person 
   ? res.json(person)
   : res.status(404).json({ error: 'The ID that you requested does not exist' })
 })
+
 
 // Handling POST Requests
 const createNewID = () => {
@@ -69,10 +69,9 @@ const createNewID = () => {
 }
 
 app.post('/api/persons', (req, res) => {
-  console.log(req.body)
   const newName = req.body.name
   const newNumber = req.body.number
-
+  
   if (!newName || !newNumber) {
     res.status(400).json({ error: 'Name and Number are required params' })
     console.error('Name and Number are required params')
@@ -82,17 +81,18 @@ app.post('/api/persons', (req, res) => {
     console.error('Name must be unique')
     return
   }
-
+  
   const newPerson = {
     id: createNewID(),
     name: newName, 
     number: newNumber
   }
-
+  
   persons = persons.concat(newPerson)
-  console.log(`${newPerson.name} successfully added`);
-  res.status(201).json(persons)
+  console.log(`${newPerson.name} successfully added`)
+  res.status(201).json(newPerson)
 })
+
 
 // Handling DELETE Requests
 app.delete('/api/persons/:id', (req, res) => {
