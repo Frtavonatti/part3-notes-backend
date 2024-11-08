@@ -13,8 +13,39 @@ mongoose.connect(url)
 })
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String
+  name: {
+    type: String,
+    minLength: 3,
+    required: true
+  },
+  number: {
+    type: String,
+    minLength: 8,
+    // Validador personalizado
+    validate: {
+      validator: function(value) {
+        // Dividir el número en partes usando el guion como separador
+        const parts = value.split('-');
+        // Verificar que haya exactamente dos partes
+        if (parts.length !== 2) {
+          return false;
+        }
+        // Verificar que la primera parte tenga 2 o 3 dígitos
+        const part1 = parts[0];
+        if (part1.length < 2 || part1.length > 3 || isNaN(part1)) {
+          return false;
+        }
+        // Verificar que la segunda parte tenga solo dígitos
+        const part2 = parts[1];
+        if (isNaN(part2)) {
+          return false;
+        }
+        return true;
+      },
+      message: props => `${props.value} is not a valid phone number!`
+    },
+    required: true
+  }
 })
 
 personSchema.set('toJSON', {
