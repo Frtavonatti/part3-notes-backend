@@ -16,7 +16,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :c
 const Person = require('./models/person')
 
 // ROUTES
-// GET
+// GET all
 app.get('/api/persons', (req, res) => {
     Person.find({})
       .then(persons => {
@@ -24,16 +24,18 @@ app.get('/api/persons', (req, res) => {
       })
 })
 
-app.get('/api/persons/:id', (req, res) => {
+// GET person by ID
+app.get('/api/persons/:id', (req, res, next) => {
   const id = req.params.id
   Person.findById(id)
     .then(person => {
-        res.json(person)
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).json({ error: 'The ID that you requested does not exist' });
+      }
     })
-    .catch(error => {
-      console.error(error)
-      res.status(500).json({ error: 'The ID that you requested does not exist' })
-    })
+    .catch(error => next(error)); 
 })
 
 
@@ -46,11 +48,7 @@ app.post('/api/persons', (req, res) => {
     res.status(400).json({ error: 'Name and Number are required params' })
     console.error('Name and Number are required params')
     return
-  } else if (persons.some(person => person.name === newName)) {
-    res.status(400).json({ error: 'Name must be unique' })
-    console.error('Name must be unique')
-    return
-  }
+  } 
   
   const newPerson = new Person({
     name: newName, 
@@ -64,21 +62,52 @@ app.post('/api/persons', (req, res) => {
 })
 
 
+//PUT
+app.put('/api/persons/:id', (req, res, next) => {
+  const id = req.params.id
+  const body = req.body
+
+  const updatedPerson = {
+    name: body.name,
+    number: body.number,
+  }
+
+  Person.findByIdAndUpdate(id, updatedPerson, { new: true })
+    .then(res.status(200).json(updatedPerson))
+    .catch(error => next(error))
+})
+
+
 // DELETE
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
   const id = req.params.id
 
   Person.findByIdAndDelete(id)
     .then(personToDelete => {
-      res.status(204).json(personToDelete)
-      console.log(`${personToDelete.name} deleted`)
+      if (personToDelete) {
+        res.status(204).json(personToDelete);
+        console.log(`${personToDelete.name} deleted`);
+      } else {
+        res.status(404).json({ error: 'The ID that you requested does not exist' });
+      }
     })
-    .catch(error => {
-      res.status(404).json({ error: 'The ID that you requested does not exist' })
-      console.error('The ID that you requested does not exist')
-    })
+    .catch(error => next(error)); 
 })
 
+
+// MIDLEWARE
+//Error Handler
+app.use((error, req, res, next) => {
+  console.error(error.message)
+  
+  if (error.name === 'CastError') {
+    return res.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+})
+
+// PORT CONECTION
 const PORT = process.env.PORT 
 app.listen(PORT,  () => {
     console.log(`Server running on port ${PORT}`);
